@@ -1,0 +1,1 @@
+require("dotenv").config(); const express = require("express"); const health = require("./routes/health"); const app = express(); app.use(express.json()); app.use("/health", health); const port = process.env.PORT || 3000; app.listen(port, () => console.log("OK on :3000"));
