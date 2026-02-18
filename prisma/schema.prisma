@@ -1,0 +1,20 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+url = "postgresql://wa_finance_db_user:7T8mWAUUcftUjOnYrzNoEbg1S7jGMIzS@dpg-d6ag94vgi27c73d3cbag-a.oregon-postgres.render.com/wa_finance_db"
+}
+
+model GoogleAuth {
+  id           String   @id @default(cuid())
+  userKey      String   @unique
+  accessToken  String
+  refreshToken String?
+  scope        String?
+  tokenType    String?
+  expiryDate   BigInt?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
