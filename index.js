@@ -1,4 +1,4 @@
-const express = require('express');
+kconst express = require('express');
 const { PrismaClient } = require('@prisma/client');
 
 const app = express();
@@ -40,16 +40,25 @@ app.post('/users', async (req, res) => {
   }
 });
 
-// Verificação do webhook (Meta chama via GET)
+// Verificação do webhook (Meta chama via GET com hub.*)
 app.get('/webhook', (req, res) => {
+  console.log('GET /webhook query:', req.query);
+
   const mode = req.query['hub.mode'];
   const token = req.query['hub.verify_token'];
   const challenge = req.query['hub.challenge'];
 
   if (mode === 'subscribe' && token === process.env.VERIFY_TOKEN) {
+    console.log('Webhook verificado com sucesso');
     return res.status(200).send(challenge);
   }
 
+  console.log(
+    'Falha na verificação do webhook. Token recebido:',
+    token,
+    'Token esperado:',
+    process.env.VERIFY_TOKEN
+  );
   return res.sendStatus(403);
 });
 
@@ -58,8 +67,10 @@ app.post('/webhook', async (req, res) => {
   try {
     const body = req.body;
 
-    // Confirma recebimento rapidamente (Meta exige resposta rápida)
+    // Meta exige resposta rápida
     res.sendStatus(200);
+
+    console.log('POST /webhook body:', JSON.stringify(body));
 
     if (!body?.entry?.length) return;
 
@@ -70,18 +81,12 @@ app.post('/webhook', async (req, res) => {
     if (!messages || !messages.length) return;
 
     const msg = messages[0];
-    const from = msg.from; // número do usuário (formato internacional)
+    const from = msg.from; // número do usuário (formato internacional, sem +)
     const text = msg?.text?.body;
 
     if (!from || !text) return;
 
-    // Exemplo: salva a mensagem no banco (opcional)
-    // Se você ainda não criou esse model, pode comentar esta parte.
-    // await prisma.message.create({
-    //   data: { from, text },
-    // });
-
-    // Responde com um "echo"
+    // Resposta simples (echo)
     await sendWhatsAppText(from, `Recebi sua mensagem: ${text}`);
   } catch (error) {
     console.error('Webhook error:', error);
@@ -119,6 +124,8 @@ async function sendWhatsAppText(to, message) {
 
   if (!resp.ok) {
     console.error('Erro ao enviar WhatsApp:', data);
+  } else {
+    console.log('Mensagem enviada com sucesso:', data);
   }
 }
 
