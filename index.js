@@ -1,4 +1,4 @@
-kconst express = require('express');
+const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 
 const app = express();
