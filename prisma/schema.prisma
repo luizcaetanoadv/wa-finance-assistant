@@ -4,7 +4,11 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+<<<<<<< HEAD
 url = env("DATABASE_URL")
+=======
+url = "postgresql://wa_finance_db_user:7T8mWAUUcftUjOnYrzNoEbg1S7jGMIzS@dpg-d6ag94vgi27c73d3cbag-a.oregon-postgres.render.com/wa_finance_db"
+>>>>>>> 8d91e72bcf7ea7c8b3a5adfd43728c8838e4f841
 }
 
 model GoogleAuth {
